@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ders Notları Arşivi</title>
+    <style>
+        /* SADE VE MODERN CSS */
+        :root {
+            --primary-color: #2c3e50; /* Koyu Mavi */
+            --accent-color: #3498db;  /* Açık Mavi */
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        /* NOT KARTLARI IZGARASI */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* KART TASARIMI */
+        .note-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .note-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .note-info {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        /* BUTONLAR */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-preview {
+            background-color: #e2e6ea;
+            color: #333;
+        }
+
+        .btn-preview:hover {
+            background-color: #dbe2e8;
+        }
+
+        .btn-download {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #2980b9;
+        }
+
+        /* MODAL (ÖNİZLEME PENCERESİ) */
+        .modal-overlay {
+            display: none; /* Başlangıçta gizli */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            height: 90%;
+            max-width: 1000px;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ders Notları Arşivi</h1>
+        <p>Yazılım Mühendisliği Ders Notları ve Çıkmış Sorular</p>
+    </header>
+
+    <div class="notes-grid">
+        
+        <div class="note-card">
+            <div class="note-title">Veri Yapıları - Vize Notları</div>
+            <div class="note-info">2. Sınıf • PDF • 1.2 MB</div>
+            <div class="btn-group">
+                <button class="btn btn-preview" onclick="openPreview('notlar/veri_yapilari.pdf')">👁️ Göz At</button>
+                <a href="notlar/veri_yapilari.pdf" class="btn btn-download" download>⬇️ İndir</a>
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">Web Programlama - Final Özeti</div>
+            <div class="note-info">2. Sınıf • PDF • 3.4 MB</div>
+            <div class="btn-group">
+                <button class="btn btn-preview" onclick="openPreview('notlar/web_prog.pdf')">👁️ Göz At</button>
+                <a href="notlar/web_prog.pdf" class="btn btn-download" download>⬇️ İndir</a>
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">Lineer Cebir - Çıkmış Sorular</div>
+            <div class="note-info">1. Sınıf • PDF • 800 KB</div>
+            <div class="btn-group">
+                <button class="btn btn-preview" onclick="openPreview('notlar/lineer.pdf')">👁️ Göz At</button>
+                <a href="notlar/lineer.pdf" class="btn btn-download" download>⬇️ İndir</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="pdfModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">Kapat ✖</span>
+            <iframe id="pdfFrame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Modalı açan fonksiyon
+        function openPreview(pdfUrl) {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            
+            frame.src = pdfUrl; // Iframe'in kaynağını değiştir
+            modal.style.display = 'flex'; // Modalı göster
+        }
+
+        // Modalı kapatan fonksiyon
+        function closeModal() {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            
+            modal.style.display = 'none'; // Modalı gizle
+            frame.src = ''; // Iframe'i temizle (performans için)
+        }
+
+        // ESC tuşuna basınca kapatma özelliği
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+
+        // Modalın siyah boşluğuna tıklayınca kapatma
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
